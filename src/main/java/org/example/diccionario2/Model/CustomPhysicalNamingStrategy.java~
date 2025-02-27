@@ -1,0 +1,4 @@
+package org.example.diccionario2.Model;
+
+public class CustomPhysicalNamingStrategy {
+}
