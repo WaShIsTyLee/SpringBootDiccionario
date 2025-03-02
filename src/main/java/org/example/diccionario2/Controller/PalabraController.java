@@ -74,5 +74,13 @@ public class PalabraController {
         return ResponseEntity.status(HttpStatus.OK).body(updatedPalabra);
     }
 
+    @CrossOrigin
+    @DeleteMapping("/{id}")
+    public HttpStatus deletePalabra(@PathVariable int id) throws RecordNotFoundException {
+        palabraService.deletePalabra(id);
+        return HttpStatus.ACCEPTED;
+    }
+
 
 }
+

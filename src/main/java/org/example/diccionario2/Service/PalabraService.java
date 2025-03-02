@@ -61,6 +61,14 @@ public class PalabraService {
             } else {
                 throw new RecordNotFoundException("No existe palabra para el id: ", palabra.getId());
             }
-
     }
+    public void deletePalabra(int id) throws RecordNotFoundException {
+        Optional<Palabra> palabraOptional = palabraRepository.findById(id);
+        if (palabraOptional.isPresent()){
+            palabraRepository.delete(palabraOptional.get());
+        }else{
+            throw new RecordNotFoundException("No existe Pelicula para el id: ",id);
+        }
+    }
+
 }
