@@ -56,9 +56,11 @@ public class PalabraService {
     }
 
     public List<Palabra> obtenerPalabrasPorInicial(String letra) {
+        // Verifica si la letra tiene longitud 1 y si es una letra válida
         if (letra.length() != 1 || !Character.isLetter(letra.charAt(0))) {
             throw new IllegalArgumentException("El parámetro debe ser una letra válida.");
         }
+
         return palabraRepository.findByInicial(letra.toUpperCase());
     }
 

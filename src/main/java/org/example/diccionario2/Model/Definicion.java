@@ -1,5 +1,6 @@
 package org.example.diccionario2.Model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.example.diccionario2.Model.Palabra;
@@ -17,7 +18,7 @@ public class Definicion {
     @Column(name = "ejemplo")
     private String ejemplo;
 
-    @JsonIgnore
+    @JsonBackReference // para evitar la recursividad
     @ManyToOne
     @JoinColumn(name = "palabra_id")
     private Palabra palabra;

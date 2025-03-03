@@ -20,11 +20,18 @@ public class DefinicionService {
     @Autowired
     private PalabraRepository palabraRepository;
 
+    // Guarda la definición en la base de datos.
+    public Definicion saveDefinicion(Definicion definicion) {
+        return definicionRepository.save(definicion);
+    }
+
+    // Obtener todas las definiciones de una palabra específica
     public List<Definicion> getDefinicionesByPalabraID(int palabraID) {
         return definicionRepository.getDefinicionesByPalabraID(palabraID);
 
     }
 
+    // Eliminar una definición específica (DELETE /definiciones/{id})
     public void deleteDefinicion(int id) throws RecordNotFoundException {
         Optional<Definicion> definicionOptional = definicionRepository.findById(id);
         if (definicionOptional.isPresent()) {
@@ -34,6 +41,6 @@ public class DefinicionService {
             palabraRepository.save(palabra);
             definicionRepository.delete(definicion);
         }
-
     }
+
 }

@@ -1,6 +1,7 @@
 package org.example.diccionario2.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.example.diccionario2.Model.Definicion;
 
@@ -19,6 +20,7 @@ public class Palabra {
     @Column(name = "categoria_gramatical")
     private String categoriaGramatical;
 
+    @JsonManagedReference // para evitar la recursividad
     @OneToMany(mappedBy = "palabra", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Definicion> definiciones;
 
