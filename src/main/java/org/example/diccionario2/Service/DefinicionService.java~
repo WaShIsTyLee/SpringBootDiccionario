@@ -27,13 +27,7 @@ public class DefinicionService {
 
     public void deleteDefinicion(int id) throws RecordNotFoundException {
         Optional<Definicion> definicionOptional = definicionRepository.findById(id);
-        if (definicionOptional.isPresent()) {
-            Definicion definicion = definicionOptional.get();
-            Palabra palabra = definicion.getPalabra();
-            palabra.getDefiniciones().remove(definicion);
-            palabraRepository.save(palabra);
-            definicionRepository.delete(definicion);
-        }
+
 
     }
 }

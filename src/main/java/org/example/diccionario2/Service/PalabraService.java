@@ -1,6 +1,7 @@
 package org.example.diccionario2.Service;
 
 import org.example.diccionario2.Exception.RecordNotFoundException;
+import org.example.diccionario2.Model.Definicion;
 import org.example.diccionario2.Model.Palabra;
 import org.example.diccionario2.Repository.PalabraRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +42,24 @@ public class PalabraService {
         return palabraRepository.save(palabra);
     }
 
-    public boolean existePalabra(String termino) {
+    public boolean giexistePalabra(String termino) {
         if (palabraRepository.existeTermino(termino) != null) return true;
         else return false;
+    }
+
+
+    public Palabra agregarDefinicion(int id, Definicion definicion) throws RecordNotFoundException {
+        Optional<Palabra> optionalPalabra = palabraRepository.findById(id);
+        if (!optionalPalabra.isPresent()) {
+            throw new RecordNotFoundException("No se ha encontrado la palabra", id);
+        }
+        Palabra palabra = optionalPalabra.get();
+        definicion.setPalabra(palabra);
+        if (palabra.getDefiniciones() == null) {
+            palabra.setDefiniciones(new ArrayList<>());
+        }
+        palabra.getDefiniciones().add(definicion);
+        return palabraRepository.save(palabra);
     }
 
 
@@ -51,24 +67,25 @@ public class PalabraService {
         if (palabra == null) {
             throw new RecordNotFoundException("El objeto palabra no puede ser nulo.", 0l);
         }
-            Optional<Palabra> palabraOptional = palabraRepository.findById(id);
-            if (palabraOptional.isPresent()) {
-                Palabra newPalabra = palabraOptional.get();
-                newPalabra.setTermino(palabra.getTermino());
-                newPalabra.setCategoriaGramatical(palabra.getCategoriaGramatical());
-                newPalabra = palabraRepository.save(newPalabra);
-                return newPalabra;
-            } else {
-                throw new RecordNotFoundException("No existe palabra para el id: ", palabra.getId());
-            }
-    }
-    public void deletePalabra(int id) throws RecordNotFoundException {
         Optional<Palabra> palabraOptional = palabraRepository.findById(id);
-        if (palabraOptional.isPresent()){
-            palabraRepository.delete(palabraOptional.get());
-        }else{
-            throw new RecordNotFoundException("No existe Pelicula para el id: ",id);
+        if (palabraOptional.isPresent()) {
+            Palabra newPalabra = palabraOptional.get();
+            newPalabra.setTermino(palabra.getTermino());
+            newPalabra.setCategoriaGramatical(palabra.getCategoriaGramatical());
+            newPalabra = palabraRepository.save(newPalabra);
+            return newPalabra;
+        } else {
+            throw new RecordNotFoundException("No existe palabra para el id: ", palabra.getId());
         }
     }
 
+    public void deletePalabra(int id) throws RecordNotFoundException {
+        Optional<Palabra> palabraOptional = palabraRepository.findById(id);
+        if (palabraOptional.isPresent()) {
+            palabraRepository.delete(palabraOptional.get());
+        } else {
+            throw new RecordNotFoundException("No existe Pelicula para el id: ", id);
+        }
+    }
 }
+

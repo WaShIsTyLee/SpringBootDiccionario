@@ -90,8 +90,8 @@ public class PalabraController {
 
     @CrossOrigin
     @DeleteMapping("/definiciones/{id}")
-    public HttpStatus deleteDefinicion( @PathVariable int id) throws RecordNotFoundException {
-        definicionService.deleteDefinicion(id);
+    public HttpStatus deleteDefinicion( @PathVariable int definicionId) throws RecordNotFoundException {
+        definicionService.deleteDefinicion(definicionId);
         return HttpStatus.ACCEPTED;
     }
 
