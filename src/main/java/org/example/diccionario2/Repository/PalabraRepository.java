@@ -10,9 +10,9 @@ import java.util.List;
 public interface PalabraRepository extends JpaRepository<Palabra, Integer> {
     @Query("SELECT p FROM Palabra p WHERE p.termino = ?1")
     Palabra existeTermino(String termino);
-    List<Palabra> findByCategoriaGramatical(String categoriaGramatical);
     @Query("SELECT p FROM Palabra p WHERE p.termino LIKE :letra%")
     List<Palabra> findByInicial(@Param("letra") String letra);
 
+    List<Palabra> findByCategoriaGramatical(String categoriaGramatical);
 
 }

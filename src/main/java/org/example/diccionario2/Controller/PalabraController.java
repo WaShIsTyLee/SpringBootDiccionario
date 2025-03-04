@@ -84,7 +84,23 @@ public class PalabraController {
                     @ApiResponse(responseCode = "404", description = "Palabra no encontrada", content = @Content)
             }
     )
-    public ResponseEntity<Palabra> getPalabra(@Parameter(description = "ID de la palabra a obtener") @PathVariable int id) {
+    public ResponseEntity<Map<String, Object>> getPalabra(@Parameter(description = "ID de la palabra a obtener") @PathVariable int id) {
+        Palabra palabra = palabraService.getPalabra(id);
+
+        if (palabra == null) {
+            throw new RecordNotFoundException("No se ha encontrado la palabra", id);
+        }
+
+        Map<String, Object> palabraData = new HashMap<>();
+        palabraData.put("id", palabra.getId());
+        palabraData.put("termino", palabra.getTermino());
+        palabraData.put("categoriaGramatical", palabra.getCategoriaGramatical());
+
+        return new ResponseEntity<>(palabraData, new HttpHeaders(), HttpStatus.OK);
+    }
+    @CrossOrigin
+    @GetMapping("/definiciones/{id}")
+    public ResponseEntity<Palabra> getPalabraconDefiniciones(@Parameter(description = "ID de la palabra a obtener") @PathVariable int id) {
         Palabra palabra = palabraService.getPalabra(id);
         List<Definicion> definiciones = definicionService.getDefinicionesByPalabraID(id);
 
@@ -94,6 +110,7 @@ public class PalabraController {
         palabra.setDefiniciones(definiciones);
         return new ResponseEntity<>(palabra, new HttpHeaders(), HttpStatus.OK);
     }
+
 
     /**
      * Crea una nueva palabra.
@@ -191,9 +208,7 @@ public class PalabraController {
         if (palabraService.existePalabra(palabra.getTermino())) {
             throw new RecordNotFoundException("La palabra ya existe: ", palabra.getTermino());
         }
-
         Palabra createdPalabra = palabraService.crearPalabra(palabra);
-
         if (palabra.getDefiniciones() != null && !palabra.getDefiniciones().isEmpty()) {
             for (Definicion definicion : palabra.getDefiniciones()) {
                 definicion.setPalabra(createdPalabra);

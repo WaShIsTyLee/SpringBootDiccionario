@@ -47,6 +47,7 @@ public class PalabraService {
 
     public List<Palabra> obtenerPalabrasPorCategoria(String categoriaGramatical) {
         return palabraRepository.findByCategoriaGramatical(categoriaGramatical);
+
     }
 
     // Verificar si una palabra ya existe en el diccionario
