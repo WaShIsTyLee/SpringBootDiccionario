@@ -35,11 +35,6 @@ public class PalabraController {
     @Autowired
     private DefinicionService definicionService;
 
-    /**
-     * Obtiene todas las palabras sin sus definiciones.
-     *
-     * @return Lista de palabras sin definiciones.
-     */
     @CrossOrigin
     @GetMapping
     @Operation(
@@ -65,13 +60,6 @@ public class PalabraController {
         return new ResponseEntity<>(palabrasSinDefiniciones, new HttpHeaders(), HttpStatus.OK);
     }
 
-    /**
-     * Obtiene una palabra específica con sus definiciones.
-     *
-     * @param id ID de la palabra.
-     * @return Palabra con sus definiciones.
-     * @throws RecordNotFoundException Si no se encuentra la palabra.
-     */
     @CrossOrigin
     @GetMapping("/{id}")
     @Operation(
@@ -84,41 +72,18 @@ public class PalabraController {
                     @ApiResponse(responseCode = "404", description = "Palabra no encontrada", content = @Content)
             }
     )
-    public ResponseEntity<Map<String, Object>> getPalabra(@Parameter(description = "ID de la palabra a obtener") @PathVariable int id) {
-        Palabra palabra = palabraService.getPalabra(id);
-
-        if (palabra == null) {
-            throw new RecordNotFoundException("No se ha encontrado la palabra", id);
-        }
-
-        Map<String, Object> palabraData = new HashMap<>();
-        palabraData.put("id", palabra.getId());
-        palabraData.put("termino", palabra.getTermino());
-        palabraData.put("categoriaGramatical", palabra.getCategoriaGramatical());
-
-        return new ResponseEntity<>(palabraData, new HttpHeaders(), HttpStatus.OK);
-    }
-    @CrossOrigin
-    @GetMapping("/definiciones/{id}")
-    public ResponseEntity<Palabra> getPalabraconDefiniciones(@Parameter(description = "ID de la palabra a obtener") @PathVariable int id) {
+    public ResponseEntity<Palabra> getPalabra(@Parameter(description = "ID de la palabra a obtener") @PathVariable int id) {
         Palabra palabra = palabraService.getPalabra(id);
         List<Definicion> definiciones = definicionService.getDefinicionesByPalabraID(id);
 
         if (palabra == null) {
             throw new RecordNotFoundException("No se ha encontrado la palabra", id);
         }
+
         palabra.setDefiniciones(definiciones);
         return new ResponseEntity<>(palabra, new HttpHeaders(), HttpStatus.OK);
     }
 
-
-    /**
-     * Crea una nueva palabra.
-     *
-     * @param palabra Objeto palabra a crear.
-     * @return La palabra creada.
-     * @throws RecordNotFoundException Si la palabra ya existe.
-     */
     @CrossOrigin
     @PostMapping
     @Operation(
@@ -139,14 +104,6 @@ public class PalabraController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPalabra);
     }
 
-    /**
-     * Actualiza una palabra existente.
-     *
-     * @param id      ID de la palabra a actualizar.
-     * @param palabra Datos de la palabra actualizada.
-     * @return La palabra actualizada.
-     * @throws RecordNotFoundException Si la palabra no se encuentra.
-     */
     @CrossOrigin
     @PutMapping("/{id}")
     @Operation(
@@ -164,13 +121,6 @@ public class PalabraController {
         return ResponseEntity.status(HttpStatus.OK).body(updatedPalabra);
     }
 
-    /**
-     * Elimina una palabra por su ID.
-     *
-     * @param id ID de la palabra a eliminar.
-     * @return Estado HTTP 202 si se elimina correctamente.
-     * @throws RecordNotFoundException Si la palabra no existe.
-     */
     @CrossOrigin
     @DeleteMapping("/{id}")
     @Operation(
@@ -186,24 +136,8 @@ public class PalabraController {
         return HttpStatus.ACCEPTED;
     }
 
-    /**
-     * Crea una palabra con definiciones asociadas.
-     *
-     * @param palabra Objeto de palabra con definiciones a crear.
-     * @return La palabra creada con las definiciones asociadas.
-     */
     @CrossOrigin
     @PostMapping("/con-definiciones")
-    @Operation(
-            summary = "Crear palabra con definiciones",
-            description = "Este endpoint permite crear una palabra junto con sus definiciones asociadas.",
-            responses = {
-                    @ApiResponse(responseCode = "201", description = "Palabra creada con definiciones", content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(value = "{ \"id\": 1, \"termino\": \"java\", \"categoriaGramatical\": \"sustantivo\", \"definiciones\": [{\"id\": 1, \"definicion\": \"Lenguaje de programación orientado a objetos\"}]}"))
-                    ),
-                    @ApiResponse(responseCode = "400", description = "La palabra ya existe", content = @Content)
-            }
-    )
     public ResponseEntity<Palabra> crearPalabraConDefiniciones(@RequestBody Palabra palabra) {
         if (palabraService.existePalabra(palabra.getTermino())) {
             throw new RecordNotFoundException("La palabra ya existe: ", palabra.getTermino());
@@ -215,55 +149,21 @@ public class PalabraController {
                 definicionService.saveDefinicion(definicion);
             }
         }
-
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPalabra);
     }
 
-    /**
-     * Obtiene palabras por su categoría gramatical.
-     *
-     * @param categoriaGramatical Categoría gramatical de las palabras.
-     * @return Lista de palabras que pertenecen a la categoría indicada.
-     */
     @CrossOrigin
     @GetMapping("/categoria/{categoriaGramatical}")
-    @Operation(
-            summary = "Obtener palabras por categoría",
-            description = "Este endpoint obtiene palabras que pertenecen a una categoría gramatical específica.",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Lista de palabras por categoría", content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(value = "[{\"id\": 1, \"termino\": \"java\", \"categoriaGramatical\": \"sustantivo\"}]"))
-                    ),
-                    @ApiResponse(responseCode = "204", description = "No se encontraron palabras", content = @Content)
-            }
-    )
     public ResponseEntity<List<Palabra>> obtenerPalabrasPorCategoria(@PathVariable String categoriaGramatical) {
-
         List<Palabra> palabras = palabraService.obtenerPalabrasPorCategoria(categoriaGramatical);
         if (palabras.isEmpty()) {
-            return ResponseEntity.noContent().build();  // Responde con 204 si no hay palabras
+            return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(palabras);  // Responde con 200 y la lista de palabras
+        return ResponseEntity.ok(palabras);
     }
 
-    /**
-     * Obtiene palabras que empiezan con una letra específica.
-     *
-     * @param letra Letra inicial de las palabras.
-     * @return Lista de palabras que empiezan con la letra indicada.
-     */
     @CrossOrigin
     @GetMapping("/inicial/{letra}")
-    @Operation(
-            summary = "Obtener palabras por letra inicial",
-            description = "Este endpoint obtiene palabras que comienzan con una letra específica.",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Lista de palabras por inicial", content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(value = "[{\"id\": 1, \"termino\": \"java\", \"categoriaGramatical\": \"sustantivo\"}]"))
-                    ),
-                    @ApiResponse(responseCode = "204", description = "No se encontraron palabras", content = @Content)
-            }
-    )
     public ResponseEntity<List<Palabra>> obtenerPalabrasPorInicial(@PathVariable String letra) {
         List<Palabra> palabras = palabraService.obtenerPalabrasPorInicial(letra.toUpperCase());
         if (palabras.isEmpty()) {

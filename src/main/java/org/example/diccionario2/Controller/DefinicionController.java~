@@ -44,7 +44,7 @@ public class DefinicionController {
                             responseCode = "200",
                             description = "Palabra con la nueva definición añadida",
                             content = @Content(mediaType = "application/json",
-                                    examples = @ExampleObject(value = "{ \"id\": 1, \"termino\": \"telefono\", \"categoriaGramatical\": \"sustantivo\", \"definiciones\": [{\"id\": 1, \"definicion\": \"Dispositivo de comunicación a distancia\"}]}"))
+                                    examples = @ExampleObject(value = "{ \"id\": 1, \"termino\": \"java\", \"categoriaGramatical\": \"sustantivo\", \"definiciones\": [{\"id\": 1, \"definicion\": \"Lenguaje de programación orientado a objetos\"}]}"))
                     ),
                     @ApiResponse(responseCode = "404", description = "Palabra no encontrada", content = @Content)
             }
