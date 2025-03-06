@@ -42,7 +42,7 @@ public class PalabraController {
             description = "Este endpoint obtiene una lista de todas las palabras disponibles en la base de datos sin incluir sus definiciones.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Lista de palabras", content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(value = "[{\"id\": 1, \"termino\": \"java\", \"categoriaGramatical\": \"sustantivo\"}, {\"id\": 2, \"termino\": \"python\", \"categoriaGramatical\": \"sustantivo\"}]"))
+                            examples = @ExampleObject(value = "[{\"id\": 1, \"termino\": \"telefono\", \"categoriaGramatical\": \"sustantivo\"}, {\"id\": 2, \"termino\": \"telefono\", \"categoriaGramatical\": \"sustantivo\"}]"))
                     )
             }
     )
@@ -51,14 +51,31 @@ public class PalabraController {
         List<Map<String, Object>> palabrasSinDefiniciones = new ArrayList<>();
 
         for (Palabra palabra : palabras) {
-            Map<String, Object> palabraData = new HashMap<>();
-            palabraData.put("id", palabra.getId());
-            palabraData.put("termino", palabra.getTermino());
-            palabraData.put("categoriaGramatical", palabra.getCategoriaGramatical());
-            palabrasSinDefiniciones.add(palabraData);
+            Map<String, Object> palabraM = new HashMap<>();
+            palabraM.put("id", palabra.getId());
+            palabraM.put("termino", palabra.getTermino());
+            palabraM.put("categoriaGramatical", palabra.getCategoriaGramatical());
+            palabrasSinDefiniciones.add(palabraM);
         }
         return new ResponseEntity<>(palabrasSinDefiniciones, new HttpHeaders(), HttpStatus.OK);
     }
+
+    @GetMapping("/{id}/sin-definiciones")
+    public ResponseEntity<Map<String, Object>> obtenerPalabraSinDefiniciones(@PathVariable int id) {
+        Palabra palabra = palabraService.getPalabra(id);
+
+        if (palabra == null) {
+            throw new RecordNotFoundException("No se ha encontrado la palabra", id);
+        }
+
+        Map<String, Object> palabraM = new HashMap<>();
+        palabraM.put("id", palabra.getId());
+        palabraM.put("termino", palabra.getTermino());
+        palabraM.put("categoriaGramatical", palabra.getCategoriaGramatical());
+
+        return new ResponseEntity<>(palabraM, new HttpHeaders(), HttpStatus.OK);
+    }
+
 
     @CrossOrigin
     @GetMapping("/{id}")
@@ -67,7 +84,7 @@ public class PalabraController {
             description = "Este endpoint obtiene una palabra específica junto con sus definiciones asociadas.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Palabra con definiciones", content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(value = "{ \"id\": 1, \"termino\": \"java\", \"categoriaGramatical\": \"sustantivo\", \"definiciones\": [{\"id\": 1, \"definicion\": \"Lenguaje de programación orientado a objetos\"}]}"))
+                            examples = @ExampleObject(value = "{ \"id\": 1, \"termino\": \"telefono\", \"categoriaGramatical\": \"sustantivo\", \"definiciones\": [{\"id\": 1, \"definicion\": \"Dispositivo de comunicación\"}]}"))
                     ),
                     @ApiResponse(responseCode = "404", description = "Palabra no encontrada", content = @Content)
             }
@@ -91,7 +108,7 @@ public class PalabraController {
             description = "Este endpoint crea una nueva palabra en la base de datos. Si la palabra ya existe, se generará un error.",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Palabra creada", content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(value = "{ \"id\": 1, \"termino\": \"java\", \"categoriaGramatical\": \"sustantivo\"}"))
+                            examples = @ExampleObject(value = "{ \"id\": 1, \"termino\": \"telefono\", \"categoriaGramatical\": \"sustantivo\"}"))
                     ),
                     @ApiResponse(responseCode = "400", description = "La palabra ya existe", content = @Content)
             }
@@ -111,7 +128,7 @@ public class PalabraController {
             description = "Este endpoint permite actualizar una palabra existente.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Palabra actualizada", content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(value = "{ \"id\": 1, \"termino\": \"java\", \"categoriaGramatical\": \"sustantivo\"}"))
+                            examples = @ExampleObject(value = "{ \"id\": 1, \"termino\": \"telefono\", \"categoriaGramatical\": \"sustantivo\"}"))
                     ),
                     @ApiResponse(responseCode = "404", description = "Palabra no encontrada", content = @Content)
             }
